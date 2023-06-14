@@ -9,7 +9,7 @@ dotenv.config();
 
 const provider = get_provider();
 
-async function display_liquidity_info (event) {
+async function display_liquidity_info (event, provider) {
     const abiCoder = new ethers.utils.AbiCoder();
     const token1 = abiCoder.decode(['address'], event.topics[1])[0];
     const token2 = abiCoder.decode(['address'], event.topics[2])[0];
@@ -41,5 +41,5 @@ const filter = {
 }
 
 provider.on(filter, (event) => {
-    display_liquidity_info(event);
+    display_liquidity_info(event, provider);
 })

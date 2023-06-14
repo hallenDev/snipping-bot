@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "liquidity": "node modules/detect_liquidity.js"
+    "liquidity": "node modules/detect_liquidity.js",
+    "trading_event": "node modules/detect_trading_event.js"
   }
 }

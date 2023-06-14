@@ -1,12 +1,14 @@
 // includes common functions
 import { ethers } from 'ethers'
 
-import { eth_address, uniswap_v2_factory } from '../constants/constants.js';
+import { eth_address, uniswap_v2_factory, uniswap_v2_router } from '../constants/constants.js';
 import erc20Abi from '../constants/abi/erc20.json' assert { type: "json" };
 import uniswapV2FactoryAbi from '../constants/abi/uniswapV2Factory.json' assert { type: "json" };
+import uniswapV2RouterAbi from '../constants/abi/uniswapV2Router.json' assert { type: "json" };
 
 export function get_provider () {
-    return new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
+    // return new ethers.providers.JsonRpcProvider(process.env.RPC_URL);
+    return new ethers.providers.WebSocketProvider(process.env.RPC_WSS_URL);
 }
 
 export async function get_eth_balance (address, provider) {
@@ -25,6 +27,10 @@ export function get_token_contract (address, provider) {
 
 export function get_uniswap_factory (provider) {
     return new ethers.Contract(uniswap_v2_factory, uniswapV2FactoryAbi, provider);
+}
+
+export function get_uniswap_router (provider) {
+    return new ethers.Contract(uniswap_v2_router, uniswapV2RouterAbi, provider);
 }
 
 export async function get_pair_address (address, provider) {
