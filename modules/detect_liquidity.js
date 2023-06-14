@@ -10,6 +10,7 @@ dotenv.config();
 const provider = get_provider();
 
 async function display_liquidity_info (event, provider) {
+    const date = new Date().toUTCString();
     const abiCoder = new ethers.utils.AbiCoder();
     const token1 = abiCoder.decode(['address'], event.topics[1])[0];
     const token2 = abiCoder.decode(['address'], event.topics[2])[0];
@@ -24,10 +25,12 @@ async function display_liquidity_info (event, provider) {
     token_balance = ethers.utils.formatUnits(token_balance, token_info.decimal);
 
     const res = {
-        'pair address': pair_address,
-        'ETH balance': eth_balance,
-        'token balance': token_balance,
-        'token': token_info
+        'action': 'PairCreated',
+        'pair_address': pair_address,
+        'ETH_balance': eth_balance,
+        'token_balance': token_balance,
+        'token': token_info,
+        'date': date
     }
     console.log(res);
     console.log();
