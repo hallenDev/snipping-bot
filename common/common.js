@@ -55,3 +55,13 @@ export async function get_token_info (address, provider) {
     }
     return res;
 }
+
+export async function get_bytecode (address, provider) {
+    try {
+        const code = await provider.getCode(address);
+        return code;
+    } catch (e) {
+        console.log('error while getting contract byte code: ', address);
+        return null;
+    }
+}
