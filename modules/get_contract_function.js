@@ -8,7 +8,16 @@ dotenv.config();
 function get_from_abi (abi) {
     let res = [];
     for (let i = 0; i < abi.length; i ++) {
-        if(abi[i].name) res.push(abi[i].name);
+        if(abi[i].name) {
+            let tmp = abi[i].name + '(';
+            let inputs = abi[i].inputs;
+            for (let j = 0; j < inputs.length; j ++) {
+                if (j) tmp +=', ';
+                tmp += inputs[j].type + ' ' + inputs[j].name;
+            }
+            tmp += ')';
+            res.push(tmp);
+        }
     }
     return res;
 }
