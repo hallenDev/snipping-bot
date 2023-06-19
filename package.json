@@ -5,7 +5,7 @@
     "ethers": "^5.5.4",
     "evm": "^0.2.0"
   },
-  "type": "module",
+  "type": "common",
   "scripts": {
     "start": "node index.js",
     "liquidity": "node modules/detect_liquidity.js",

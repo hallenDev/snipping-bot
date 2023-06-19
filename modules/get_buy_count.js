@@ -1,8 +1,8 @@
 // get count of buy transaction when trading event is detected. also for the next 2 blocks.
-import { ethers } from 'ethers';
-import axios from 'axios';
-import { get_provider } from '../common/common.js';
-import { uniswap_v2_router } from '../constants/constants.js';
+const ethers = require('ethers');
+const axios = require('axios');
+const { get_provider } = require('../common/common.js');
+const { uniswap_v2_router } = require('../constants/constants.js');
 
 function sleep(milliseconds) {
     const date = Date.now();
@@ -12,7 +12,7 @@ function sleep(milliseconds) {
     } while (currentDate - date < milliseconds);
 }
 
-export async function get_buy_count_onBlock (blockNumber, token) {
+async function get_buy_count_onBlock (blockNumber, token) {
     let res = 0;
     let url = `https://api.etherscan.io/api?module=account&action=txlist&address=${uniswap_v2_router}&startblock=${blockNumber}&endblock=${blockNumber}&page=1&offset=300&sort=asc&apikey=${process.env.ETHERSCAN_API}`;
     const { data } = await axios(url);
@@ -29,7 +29,7 @@ export async function get_buy_count_onBlock (blockNumber, token) {
     return res;
 }
 
-export async function get_buy_count (trading_event, token) {
+async function get_buy_count (trading_event, token) {
     let id = 0;
     let res_pending = Array(3).fill(0);
     let res_onBlock = Array(3).fill(0);

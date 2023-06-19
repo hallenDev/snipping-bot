@@ -1,10 +1,8 @@
 // get contract function from byte code or verified code
-import axios from 'axios';
-import * as dotenv from 'dotenv';
-import pkg from 'evm';
-import { get_bytecode } from '../common/common.js';
-
-dotenv.config();
+const axios = require('axios');
+require('dotenv').config();
+const pkg = require('evm');
+const { get_bytecode } = require('../common/common.js');
 
 function get_from_abi (abi) {
     let res = [];
@@ -29,7 +27,7 @@ function get_from_bytecode(code) {
     return evm.getFunctions();
 }
 
-export async function get_contract_function (address, provider) {
+async function get_contract_function (address, provider) {
     let function_list;
     let url = `https://api.etherscan.io/api?module=contract&action=getabi&address=${address}&apikey=${process.env.ETHERSCAN_API}`;
     const res = await axios(url);

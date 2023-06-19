@@ -1,11 +1,18 @@
 // detect new liquidity
-import * as dotenv from 'dotenv';
-import { ethers } from 'ethers';
+require('dotenv').config();
+const ethers = require('ethers');
 
-import { get_eth_balance, get_pair_address, get_provider, get_token_contract, get_token_info } from "../common/common.js";
-import { uniswap_v2_factory, eth_address } from '../constants/constants.js';
-
-dotenv.config();
+const { 
+    get_eth_balance, 
+    get_pair_address,
+    get_provider, 
+    get_token_contract, 
+    get_token_info 
+} = require('../common/common.js');
+const { 
+    uniswap_v2_factory, 
+    eth_address 
+} = require('../constants/constants.js');
 
 const provider = get_provider();
 
