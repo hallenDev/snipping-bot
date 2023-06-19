@@ -16,7 +16,8 @@ async function filterTransaction (txHash, provider) {
     if(tx_data?.to != uniswap_v2_router) return;
     const add_liquidity_method = ethers.utils.id('addLiquidityETH(address,uint256,uint256,uint256,address,uint256)').substring(0, 10);
     if(tx_data?.data.indexOf(add_liquidity_method) == -1) return;
-    console.log('added liquidity');
+    console.log('Liquidity added');
+    console.log('tx_hash: ', txHash);
     const parameter = ethers.utils.defaultAbiCoder.decode(['address','uint256','uint256','uint256','address','uint256'], 
                                                             ethers.utils.hexDataSlice(tx_data.data, 4));
     const eth_balance = ethers.utils.formatEther(tx_data.value);

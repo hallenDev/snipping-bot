@@ -1,6 +1,6 @@
 // get count of buy transaction when trading event is detected. also for the next 2 blocks.
-import * as dotenv from 'dotenv';
 import { ethers } from 'ethers';
+import axios from 'axios';
 import { get_provider } from '../common/common.js';
 import { uniswap_v2_router } from '../constants/constants.js';
 
@@ -12,16 +12,31 @@ function sleep(milliseconds) {
     } while (currentDate - date < milliseconds);
 }
 
+export async function get_buy_count_onBlock (blockNumber, token) {
+    let res = 0;
+    let url = `https://api.etherscan.io/api?module=account&action=txlist&address=${uniswap_v2_router}&startblock=${blockNumber}&endblock=${blockNumber}&page=1&offset=300&sort=asc&apikey=${process.env.ETHERSCAN_API}`;
+    const { data } = await axios(url);
+    const tx_list = data.result;
+    const buy_action1 = ethers.utils.id('swapExactETHForTokensSupportingFeeOnTransferTokens(uint256,address[],address,uint256)').substring(0, 10);
+    const buy_action2 = ethers.utils.id('swapETHForExactTokens(uint256,address[],address,uint256)').substring(0, 10);
+    for (let i = 0; i < tx_list.length; i ++) {
+        if(tx_list[i].methodId != buy_action1 && tx_list[i].methodId != buy_action2) continue;
+        const parameter = ethers.utils.defaultAbiCoder.decode(['uint256','address[]','address','uint256'], ethers.utils.hexDataSlice(tx_list[i].input, 4));
+        if(!parameter[1] && parameter[1][0] != eth_address) continue;
+        if(parameter[1][1] != token) continue;
+        res ++;
+    }
+    return res;
+}
+
 export async function get_buy_count (trading_event, token) {
-    console.log('count of buying ', token);
     let id = 0;
-    let res = [];
-    res[0] = 0;
-    res[1] = 0;
-    res[2] = 0;
+    let res_pending = Array(3).fill(0);
+    let res_onBlock = Array(3).fill(0);
     const provider = get_provider();
 
     provider.on('pending', (txHash) => {
+        let tmp = id;
         provider.getTransaction(txHash).then((tx_data) => {
             if(tx_data?.to != uniswap_v2_router) return;
             const buy_method = ethers.utils.id('swapExactETHForTokensSupportingFeeOnTransferTokens(uint256,address[],address,uint256)').substring(0, 10);
@@ -31,18 +46,26 @@ export async function get_buy_count (trading_event, token) {
             if(!parameter[1] && parameter[1][0] != eth_address) return;
             if(parameter[1][1] != token) return;
             console.log(txHash);
-            res[id] ++;
+            res_pending[tmp] ++;
         })
     })
 
-    provider.on('block', (blockNumber) => {
+    provider.on('block', async (blockNumber) => {
         id ++;
+
         if(id == 3) {
             provider.removeAllListeners();
+            res_onBlock[id - 1] = await get_buy_count_onBlock(blockNumber, token);
             sleep(10000);
-            console.log('same block count: ', res[0]);
-            console.log('next block count: ', res[1]);
-            console.log('next block count: ', res[2]);
+            console.log('count of buying ', token);
+            console.log('trading event pending block: ', res_pending[0]);
+            console.log('trading event added block: ', res_onBlock[0]);
+            console.log('trading event pending next block: ', res_pending[1]);
+            console.log('trading event added next block: ', res_onBlock[1]);
+            console.log('trading event pending next 2 blocks: ', res_pending[2]);
+            console.log('trading event added next 2 blocks: ', res_onBlock[2]);
+        } else {
+            res_onBlock[id - 1] = await get_buy_count_onBlock(blockNumber, token);
         }
     })
 
