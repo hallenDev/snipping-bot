@@ -39,7 +39,7 @@ async function filterTransaction (txHash, provider) {
         
         action = 'start trading';
         token = tx_data.to;
-        pair_address = get_pair_address(token, provider);
+        pair_address = await get_pair_address(token, provider);
         if(pair_address == zero_address) return;    // no liquidity
         eth_balance = await get_eth_balance(pair_address, provider);
         const token_contract = get_token_contract(token, provider);
@@ -68,6 +68,7 @@ async function filterTransaction (txHash, provider) {
         'token': token_info,
         'time': date
     }
+    console.log(txHash);
     console.log(res);
     console.log();
 
