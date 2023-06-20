@@ -3,12 +3,14 @@
     "axios": "^1.4.0",
     "dotenv": "^16.1.4",
     "ethers": "^5.5.4",
-    "evm": "^0.2.0"
+    "evm": "^0.2.0",
+    "mongoose": "^7.3.0"
   },
   "type": "common",
   "scripts": {
     "start": "node index.js",
     "liquidity": "node modules/detect_liquidity.js",
-    "trading_event": "node modules/detect_trading_event.js"
+    "trading_event": "node modules/detect_trading_event.js",
+    "trader_wallet": "node modules/detect_trader_wallet.js"
   }
 }
