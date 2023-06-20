@@ -48,3 +48,7 @@ async function get_contract_function (address, provider) {
     console.log(function_list);
     console.log();
 }
+
+module.exports = {
+    get_contract_function
+}
