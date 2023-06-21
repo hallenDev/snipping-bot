@@ -48,20 +48,24 @@ async function update_wallet (address, block_number, provider) {
 }
 
 async function get_trading_action_byBlock (blockNumber, provider) {
-    let url = `https://api.etherscan.io/api?module=account&action=txlist&address=${uniswap_v2_router}&startblock=${blockNumber}&endblock=${blockNumber}&page=1&offset=300&sort=asc&apikey=${process.env.ETHERSCAN_API}`;
-    const { data } = await axios(url);
-    const tx_list = data.result;
-    for(let i = 0; i < tx_list.length; i ++) {
-        let flg = 0;
-        for(let j = 0; j < actions.length; j ++) {
-            if(tx_list[i].methodId == actions[j]) {
-                flg = 1;
-                break;
+    try{
+        let url = `https://api.etherscan.io/api?module=account&action=txlist&address=${uniswap_v2_router}&startblock=${blockNumber}&endblock=${blockNumber}&page=1&offset=300&sort=asc&apikey=${process.env.ETHERSCAN_API}`;
+        const { data } = await axios(url);
+        const tx_list = data.result;
+        for(let i = 0; i < tx_list.length; i ++) {
+            let flg = 0;
+            for(let j = 0; j < actions.length; j ++) {
+                if(tx_list[i].methodId == actions[j]) {
+                    flg = 1;
+                    break;
+                }
             }
+            if(!flg) break;
+            const operator = ethers.utils.getAddress(tx_list[i].from) ;
+            update_wallet(operator, blockNumber, provider).then();
         }
-        if(!flg) break;
-        const operator = ethers.utils.getAddress(tx_list[i].from) ;
-        update_wallet(operator, blockNumber, provider).then();
+    } catch (e) {
+        console.log('etherscan api timed out.');
     }
 }
 
