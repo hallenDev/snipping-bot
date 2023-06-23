@@ -10,6 +10,10 @@ function get_provider () {
     return new ethers.providers.WebSocketProvider(process.env.RPC_WSS_URL);
 }
 
+function get_virtual_provider() {
+    return new ethers.providers.WebSocketProvider(process.env.VIRTUAL_RPC_URL);
+}
+
 async function get_eth_balance (address, provider) {
     const eth_contract = get_token_contract(eth_address, provider);
     const balance = await eth_contract.balanceOf(address);
@@ -74,5 +78,6 @@ module.exports = {
     get_pair_address, 
     get_uniswap_router, 
     get_uniswap_factory, 
-    get_token_contract
+    get_token_contract,
+    get_virtual_provider
 }

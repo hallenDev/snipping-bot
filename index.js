@@ -4,15 +4,23 @@ const { get_provider, get_pair_address } = require('./common/common.js');
 const {
     get_contract_function
 } = require('./modules/get_contract_function.js')
+const mongoose = require('mongoose');
 
 const provider = get_provider();
 
 async function test () {
-    // const addr = '0x5C69bEe701ef814a2B6a3EDD4B1652CB9cc5aA6f';
-    // const res = await get_pair_address(addr, provider);
-    // console.log(res);
-    const addr = '0x25504baC55267E6939CEEEa3C8A13eC72632796C';
-    get_contract_function(addr, provider)
+
+    await mongoose.connect(process.env.MONGODB_URL);
+    wallet_list_schema = new mongoose.Schema({
+        "address" : String,
+        "eth_balance" : String,
+        "last_block" : Number,
+        "front_running" : {type: Number, default: 0},
+        "expert_level" : {type: Number, default: 0},
+        "trading_count": {type: Number, default: 1}
+    });
+    wallet_list_model = mongoose.model('wallet_lists', wallet_list_schema);
+    console.log(parseInt(new Date().getTime() / 1000));
 }
 
 test().then();
